@@ -1,0 +1,16 @@
+<html>
+  <header>
+    <h1>Hello {{.Username}}, hope you`re doing alright.</h1>
+  </header>
+  <body>
+    <a href={{.EmailsPagePath}}>Emails</a> <br><br>
+    <form action={{.SendEmailPagePath}} method="POST">
+      Recipient: 
+      <input type="text" size="80" name={{.SendEmailFormRecipient}}><br>
+      EmailBody:<br>
+      <textarea name={{.SendEmailFormEmailBody}} rows="24" cols="80">
+      </textarea><br>
+      <input type="submit" value="Send">
+    </form>
+  </body>
+</html>

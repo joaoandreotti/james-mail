@@ -1,0 +1,17 @@
+<html>
+  <header>
+    <h1>Hello {{.Username}}, hope you`re doing alright.</h1>
+  </header>
+  <body>
+    <a href={{.EmailsPagePath}}>Emails</a> <br><br>
+    <form action={{.SentEmailsPagePath}} method="POST">
+      <label for={{.SentEmailsFormPassword}}>Password:</label><br>
+      <input type="password" id={{.SentEmailsFormPassword}} name={{.SentEmailsFormPassword}}><br>
+      <input type="submit" value="Decrypt emails" />
+    </form>
+    <hr>
+    <td>
+      {{.SentEmailsList}}
+    </td>
+  </body>
+</html>

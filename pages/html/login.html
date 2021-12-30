@@ -1,0 +1,15 @@
+<html>
+  <header>
+    <h1>Login to james email service!</h1>
+  </header>
+  <body>
+    <a href={{.RegisterPagePath}}>Register</a>
+    <form action={{.LoginPagePath}} method="post">
+      <label for={{.LoginFormEmail}}>E-mail:</label><br>
+      <input type="text" id={{.LoginFormEmail}} name={{.LoginFormEmail}}><br>
+      <label for={{.LoginFormPassword}}>Password:</label><br>
+      <input type={{.LoginFormPassword}} id={{.LoginFormPassword}} name={{.LoginFormPassword}}><br>
+      <input type="submit" value="Submit">
+    </form>
+  </body>
+</html>

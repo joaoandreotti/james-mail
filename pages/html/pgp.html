@@ -1,0 +1,21 @@
+<html>
+  <header>
+    <h1>Hello {{.Username}}, hope you`re doing alright.</h1>
+    <h3>Here`s your pgp public key from james email service!</h3>
+  </header>
+  <body>
+    <a href={{.EmailsPagePath}}>Emails</a>
+    <form action="{{.PgpPagePath}}" method="post">
+      <label for={{.PgpFormPassword}}>Password:</label><br>
+      <input type="password" id={{.PgpFormPassword}} name={{.PgpFormPassword}}><br>
+      <input type="submit" value="Generate new key set" />
+    </form>
+    <textarea id="publicKey" readonly="readonly" rows="24" cols="80">
+      {{.PublicKey}}
+    </textarea>
+    <textarea id="privateKey" readonly="readonly" rows="24" cols="80">
+      {{.PrivateKey}}
+    </textarea>
+  </body>
+</html>
+
