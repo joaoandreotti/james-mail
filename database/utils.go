@@ -101,15 +101,15 @@ func UpdateKeyPairFromEmail(publicKey, privateKey, email string) {
   _ = session.Query(updateKeyPairFromIdQuery, publicKey, privateKey, id).Exec()
 }
 
-func InsertSentEmail(userEmail, recipient, emailBody string) {
+func InsertSentEmail(sender, recipient, emailBody string) {
   var id gocql.UUID
-  _ = session.Query(getUserIdFromEmailQuery, userEmail).Scan(&id)
+  _ = session.Query(getUserIdFromEmailQuery, sender).Scan(&id)
   _ = session.Query(insertSentEmailQuery, gocql.TimeUUID(), id, recipient, emailBody).Exec()
 }
 
-func InsertReceivedEmail(userEmail, sender, emailBody string) {
+func InsertReceivedEmail(sender, recipient, emailBody string) {
   var id gocql.UUID
-  _ = session.Query(getUserIdFromEmailQuery, userEmail).Scan(&id)
+  _ = session.Query(getUserIdFromEmailQuery, recipient).Scan(&id)
   _ = session.Query(insertReceivedEmailQuery, gocql.TimeUUID(), id, sender, emailBody).Exec()
 }
 

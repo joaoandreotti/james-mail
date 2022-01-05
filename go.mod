@@ -14,6 +14,8 @@ require (
 require (
 	github.com/ProtonMail/go-crypto v0.0.0-20211221144345-a4f6767435ab // indirect
 	github.com/ProtonMail/go-mime v0.0.0-20190923161245-9b5a4261663a // indirect
+	github.com/emersion/go-sasl v0.0.0-20200509203442-7bfe0ed36a21 // indirect
+	github.com/emersion/go-smtp v0.15.0 // indirect
 	github.com/go-playground/locales v0.14.0 // indirect
 	github.com/go-playground/universal-translator v0.18.0 // indirect
 	github.com/go-playground/validator v9.31.0+incompatible // indirect

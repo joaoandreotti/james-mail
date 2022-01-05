@@ -7,18 +7,17 @@ import (
   "james-mail/database"
   "james-mail/validator"
   "james-mail/authentication"
+  "james-mail/pgp"
   "github.com/gorilla/mux"
 )
 
 const registerPagePath string = "/register"
 
 const registerFormUsername string = "username"
-const registerFormEmail string = "email"
 const registerFormPassword string = "password"
 
 type RegisterPageData struct {
   RegisterFormUsername string
-  RegisterFormEmail string
   RegisterFormPassword string
   RegisterPagePath string
 }
@@ -26,7 +25,6 @@ type RegisterPageData struct {
 func GetRegisterPageData() (data RegisterPageData) {
   data = RegisterPageData {
     RegisterFormUsername: registerFormUsername,
-    RegisterFormEmail: registerFormEmail,
     RegisterFormPassword: registerFormPassword,
     RegisterPagePath: registerPagePath,
   }
@@ -52,15 +50,17 @@ func RegisterPost(w http.ResponseWriter, r *http.Request) {
 
   data := database.UserRegistrationData {
     Username: r.FormValue(registerFormUsername),
-    Email: r.FormValue(registerFormEmail),
     Password: r.FormValue(registerFormPassword),
   }
+  data.Email = data.Username + "@james.com"
   if !validator.ValidateStruct(data) {
     http.Redirect(w, r, errorPagePath, 302)
     return
   }
 
   database.InsertNewUser(data.Username, data.Email, data.Password)
+  publicKey, privateKey := pgp.GeneratePgpKeyPair(data.Username, data.Email, data.Password)
+  database.UpdateKeyPairFromEmail(publicKey, privateKey, data.Email)
   http.Redirect(w, r, loginPagePath, 302)
 }
 

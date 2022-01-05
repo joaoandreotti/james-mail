@@ -1,18 +1,22 @@
 package authentication
 
 import (
+  "fmt"
   "net/http"
   "github.com/gorilla/sessions"
-  "fmt"
+  "github.com/gorilla/securecookie"
 )
 
-var authCookie string = "Authentication"
-var authSecretKey string = "lasidfj198034y1r j34r190u34r891u34m1r89p 4rh1780 r"
+const authCookie string = "Authentication"
+var authSecretKey []byte = securecookie.GenerateRandomKey(32)
 
 var (
-  key = []byte(authSecretKey)
+  key = authSecretKey
   store = sessions.NewCookieStore(key)
 )
+
+func GenereateAuthSecretKey() {
+}
 
 func ValidateAuthentication(r *http.Request) bool {
   session, _ := store.Get(r, authCookie)
@@ -20,11 +24,12 @@ func ValidateAuthentication(r *http.Request) bool {
   return ok && auth
 }
 
-func Authenticate(w http.ResponseWriter, r *http.Request, username, email string) {
+func Authenticate(w http.ResponseWriter, r *http.Request, username, email, password string) {
   session, _ := store.Get(r, authCookie)
   session.Values["authenticated"] = true
   session.Values["username"] = username
   session.Values["email"] = email
+  session.Values["password"] = password
   session.Save(r, w)
 }
 

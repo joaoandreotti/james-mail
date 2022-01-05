@@ -59,7 +59,7 @@ func LoginPost(w http.ResponseWriter, r *http.Request) {
 
   if database.ValidateUserCreds(data.Email, data.Password) {
     username := database.GetUsernameFromEmail(data.Email)
-    authentication.Authenticate(w, r, username, data.Email)
+    authentication.Authenticate(w, r, username, data.Email, data.Password)
     http.Redirect(w, r, emailsPagePath, 302)
     return
   }

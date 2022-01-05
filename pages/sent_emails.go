@@ -7,6 +7,7 @@ import (
   "james-mail/authentication"
   "james-mail/validator"
   "james-mail/database"
+  "james-mail/smtp"
   "github.com/gorilla/mux"
 )
 
@@ -40,9 +41,9 @@ func SentEmailsGet(w http.ResponseWriter, r *http.Request) {
   }
 
   userEmail := authentication.GetSessionValue(r, "email")
-  encryptedEmailList := database.GetSentEmailsFromEmail(userEmail)
+  emailList := smtp.GetSentEmailsList(userEmail, "")
   data := GetSentEmailsPageData(r)
-  data.SentEmailsList = template.HTML(GetEmailHtmlList(encryptedEmailList, "", ""))
+  data.SentEmailsList = template.HTML(GetEmailHtmlList(emailList))
 
   page := template.Must(template.ParseFiles("pages/html/sent_emails.html"))
   page.Execute(w, data)
@@ -63,10 +64,9 @@ func SentEmailsPost(w http.ResponseWriter, r *http.Request) {
   }
 
   userEmail := authentication.GetSessionValue(r, "email")
-  encryptedEmailList := database.GetSentEmailsFromEmail(userEmail)
-  _, privateKey := database.GetKeyPairFromEmail(userEmail)
+  emailList := smtp.GetSentEmailsList(userEmail, formData.Password)
   data := GetSentEmailsPageData(r)
-  data.SentEmailsList = template.HTML(GetEmailHtmlList(encryptedEmailList, privateKey, formData.Password))
+  data.SentEmailsList = template.HTML(GetEmailHtmlList(emailList))
 
   page := template.Must(template.ParseFiles("pages/html/sent_emails.html"))
   page.Execute(w, data)

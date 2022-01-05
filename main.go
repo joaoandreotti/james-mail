@@ -1,9 +1,10 @@
 package main
 
 import (
-  "net/http"
+  "sync"
   "james-mail/pages"
   "james-mail/database"
+  "james-mail/smtp"
   "github.com/gorilla/mux"
 )
 
@@ -20,5 +21,10 @@ func main() {
   pages.ConfigSentEmails(r)
   pages.ConfigLogout(r)
   pages.ConfigPgp(r)
-  http.ListenAndServe(":8080", r)
+
+  var wg sync.WaitGroup
+  wg.Add(2)
+  go smtp.StartSmtpServer(&wg)
+  go pages.StartHttpServer(r, &wg)
+  wg.Wait()
 }

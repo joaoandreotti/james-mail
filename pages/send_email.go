@@ -7,7 +7,7 @@ import (
   "james-mail/authentication"
   "james-mail/database"
   "james-mail/validator"
-  "james-mail/pgp"
+  "james-mail/smtp"
   "github.com/gorilla/mux"
 )
 
@@ -62,10 +62,12 @@ func SendEmailPost(w http.ResponseWriter, r *http.Request) {
     return
   }
 
-  userEmail := authentication.GetSessionValue(r, "email")
-  publicKey, _ := database.GetKeyPairFromEmail(userEmail)
-  encryptedEmail := pgp.EncryptMessage(publicKey, data.EmailBody)
-  database.InsertSentEmail(userEmail, data.Recipient, encryptedEmail)
+  sender := authentication.GetSessionValue(r, "email")
+  password := authentication.GetSessionValue(r, "password")
+  auth := smtp.CreatePlainSession(sender, password)
+  recipient := data.Recipient
+  emailBody := data.EmailBody
+  smtp.SendAuthenticatedEmail(auth, sender, recipient, emailBody)
 
   http.Redirect(w, r, emailsPagePath, 302)
 }

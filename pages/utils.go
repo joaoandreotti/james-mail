@@ -1,18 +1,26 @@
 package pages
 
 import (
-  "james-mail/database"
-  "james-mail/pgp"
+  "log"
+  "sync"
+  "net/http"
+  "strings"
+
+  "github.com/gorilla/mux"
 )
 
-func GetEmailHtmlList(encryptedEmailList []database.StoredEmail, privateKey, password string) (emailHtmlList string) {
-  for _, encryptedEmail := range encryptedEmailList {
-    decryptedEmail := pgp.DecryptMessage(privateKey, encryptedEmail.EmailBody, password)
-    if len(decryptedEmail) > 0 {
-      emailHtmlList += "<td>"+encryptedEmail.EmailAddress+": "+decryptedEmail+"</td><hr>"
-    } else {
-      emailHtmlList += "<td>"+encryptedEmail.EmailAddress+": "+encryptedEmail.EmailBody+"</td><hr>"
-    }
+func GetEmailHtmlList(emailList []string) (emailHtmlList string) {
+  for _, email := range emailList {
+    emailInfo := strings.Split(email, ";")
+    emailAddress := emailInfo[0]
+    emailBody := emailInfo[1]
+    emailHtmlList += "<td>"+emailAddress+": "+emailBody+"</td><hr>"
   }
   return emailHtmlList
+}
+
+func StartHttpServer (r *mux.Router, wg *sync.WaitGroup) {
+  defer wg.Done()
+  log.Println("Starting server at :8080")
+  http.ListenAndServe(":8080", r)
 }

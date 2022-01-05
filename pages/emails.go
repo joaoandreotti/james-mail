@@ -7,6 +7,7 @@ import (
   "james-mail/authentication"
   "james-mail/database"
   "james-mail/validator"
+  "james-mail/smtp"
   "github.com/gorilla/mux"
 )
 
@@ -45,12 +46,12 @@ func EmailsGet(w http.ResponseWriter, r *http.Request) {
     return
   }
 
-  page := template.Must(template.ParseFiles("pages/html/emails.html"))
   userEmail := authentication.GetSessionValue(r, "email")
-  encryptedEmailList := database.GetReceivedEmailsFromEmail(userEmail)
+  emailList := smtp.GetReceivedEmailsList(userEmail, "")
   data := GetEmailsPageData(r)
-  data.EmailsReceived = template.HTML(GetEmailHtmlList(encryptedEmailList, "", ""))
+  data.EmailsReceived = template.HTML(GetEmailHtmlList(emailList))
 
+  page := template.Must(template.ParseFiles("pages/html/emails.html"))
   page.Execute(w, data)
 }
 
@@ -68,13 +69,12 @@ func EmailsReceivedPost(w http.ResponseWriter, r *http.Request) {
     return
   }
 
-  page := template.Must(template.ParseFiles("pages/html/emails.html"))
   userEmail := authentication.GetSessionValue(r, "email")
-  encryptedEmailList := database.GetReceivedEmailsFromEmail(userEmail)
-  _, privateKey := database.GetKeyPairFromEmail(userEmail)
+  emailList := smtp.GetReceivedEmailsList(userEmail, formData.Password)
   data := GetEmailsPageData(r)
-  data.EmailsReceived = template.HTML(GetEmailHtmlList(encryptedEmailList, privateKey, formData.Password))
+  data.EmailsReceived = template.HTML(GetEmailHtmlList(emailList))
 
+  page := template.Must(template.ParseFiles("pages/html/emails.html"))
   page.Execute(w, data)
 }
 
